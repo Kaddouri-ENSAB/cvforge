@@ -27,14 +27,37 @@ export const educationSchema = z.object({
 export const skillSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Nom requis'),
-  level: z.number().min(1).max(5).default(3),
+  level: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).default(3),
   category: z.enum(['hard', 'soft']).default('hard'),
+});
+
+export const experienceSchema = z.object({
+  id: z.string(),
+  company: z.string().min(1, 'Entreprise requise'),
+  position: z.string().min(1, 'Poste requis'),
+  startDate: z.string().optional().default(''),
+  endDate: z.string().optional().default(''),
+  current: z.boolean().default(false),
+  description: z.string().optional().default(''),
+  achievements: z.array(z.string()).default([]),
+});
+
+export const projectSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Nom requis'),
+  description: z.string().optional().default(''),
+  technologiesRaw: z.string().optional().default(''),
+  technologies: z.array(z.string()).default([]),
+  url: z.string().optional().default(''),
+  github: z.string().optional().default(''),
 });
 
 export const cvFormSchema = z.object({
   personal: personalInfoSchema,
   education: z.array(educationSchema).default([]),
   skills: z.array(skillSchema).default([]),
+  experiences: z.array(experienceSchema).default([]),
+  projects: z.array(projectSchema).default([]),
 });
 
 export type CVFormValues = z.infer<typeof cvFormSchema>;

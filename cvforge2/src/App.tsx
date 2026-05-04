@@ -6,7 +6,7 @@ import CVPreview from './components/preview/CVPreview';
 import { useCVStore } from './store/cvStore';
 import type { Template } from './types/cv';
 
-type TabId = 'personal' | 'education' | 'skills';
+type TabId = 'personal' | 'education' | 'experiences' | 'projects' | 'skills';
 
 const TEMPLATES: { id: Template; label: string }[] = [
   { id: 'minimaliste',   label: 'Minimaliste' },
