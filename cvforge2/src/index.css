@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* ── Print styles (Sprint 2 will expand this) ──────────────────────────────── */
 
 /* ── Print styles — Personne 2 Sprint 2 ────────────────────────────────────── */
 @media print {
