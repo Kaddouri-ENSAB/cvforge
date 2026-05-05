@@ -2,25 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Print styles (Sprint 2 will expand this) ──────────────────────────────── */
+/* ── Print styles — Personne 2 Sprint 2 ────────────────────────────────────── */
 @media print {
-  body * {
-    visibility: hidden;
+  /* Cacher tout le layout */
+  header,
+  .no-print {
+    display: none !important;
   }
-  .cv-page,
-  .cv-page * {
-    visibility: visible;
+
+  /* Cacher la colonne formulaire */
+  main > div:first-child {
+    display: none !important;
   }
-  .cv-page {
-    position: fixed;
-    inset: 0;
-    width: 210mm;
-    margin: 0;
-    padding: 15mm;
-    box-shadow: none;
+
+  /* La colonne preview prend toute la largeur */
+  main > div:last-child {
+    display: block !important;
+    width: 100% !important;
+    overflow: visible !important;
   }
+
+  /* Reset du zoom sur le conteneur CV */
+  #cv-print-area {
+    display: flex !important;
+    justify-content: center;
+  }
+
+  #cv-print-area > div {
+    transform: none !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Format A4 */
   @page {
-    size: A4;
+    size: A4 portrait;
     margin: 0;
   }
 }
