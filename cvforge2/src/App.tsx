@@ -6,6 +6,8 @@ import CVPreview from './components/preview/CVPreview';
 import CVAnalysisDrawer from './components/analysis/CVAnalysisDrawer';
 import { useCVStore } from './store/cvStore';
 import type { Template } from './types/cv';
+import Dashboard from "./components/dashboard/Dashboard";
+import LoginPage from "./pages/LoginPage";
 
 type TabId = 'personal' | 'education' | 'experiences' | 'projects' | 'skills' | 'share';
 
@@ -16,10 +18,24 @@ const TEMPLATES: { id: Template; label: string }[] = [
 ];
 
 export default function App() {
+ const [page, setPage] = useState<"login" | "dashboard" | "editor">("login");
+
   const [activeTab, setActiveTab] = useState<TabId>('personal');
   const [mobileView, setMobileView] = useState<'form' | 'preview'>('form');
   const { template, setTemplate } = useCVStore();
 
+  if (page === "login") {
+  return <LoginPage onLogin={() => setPage("dashboard")} />;
+}
+
+  if (page === 'dashboard') {
+    return (
+      <Dashboard
+        onCreateCV={() => setPage('editor')}
+        onEditCV={() => setPage('editor')}
+      />
+    );
+  }
 
   return (
 
@@ -27,6 +43,15 @@ export default function App() {
 
       {/* Top bar */}
       <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between flex-shrink-0 shadow-sm no-print">
+      
+
+      <button
+  type="button"
+  onClick={() => setPage("dashboard")}
+  className="mr-3 px-3 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition text-sm font-medium"
+>
+  ← Retour
+</button>
 
         {/* Logo */}
         <div className="flex items-center gap-3">
@@ -99,4 +124,5 @@ export default function App() {
       </main>
     </div>
   );
+
 }
