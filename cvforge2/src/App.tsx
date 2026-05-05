@@ -20,7 +20,9 @@ export default function App() {
   const [mobileView, setMobileView] = useState<'form' | 'preview'>('form');
   const { template, setTemplate } = useCVStore();
 
+
   return (
+
     <div className="h-screen flex flex-col bg-slate-50 overflow-hidden">
 
       {/* Top bar */}
@@ -92,6 +94,7 @@ export default function App() {
           ${mobileView === 'form' ? 'hidden md:flex' : 'flex'}`}>
           <CVPreview />
         </div>
+        
 
       </main>
     </div>
