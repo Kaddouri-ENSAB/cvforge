@@ -121,3 +121,18 @@ export const defaultCVData: CVData = {
   projects: [],
   certifications: [],
 };
+
+
+// add this to src/types/cv.ts
+export interface CVEntry {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  data: CVData;
+}
+
+export interface User {
+  email: string;
+  password: string;
+}
