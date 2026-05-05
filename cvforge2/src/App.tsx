@@ -1,7 +1,7 @@
 // src/App.tsx
 
 import { useState } from 'react';
-import { CVForm } from './components/forms/CVForm (1)';
+import { CVForm } from './components/forms/CVForm';
 import { CVPreview } from './components/preview/CVPreview';
 import { useCVStore } from './store/cvStore';
 import type { Template } from './types/cv';
