@@ -1,0 +1,35 @@
+// src/components/preview/PrintButton.tsx (Personne 2 — UI Polish)
+
+interface PrintButtonProps {
+  className?: string;
+}
+
+export default function PrintButton({ className = '' }: PrintButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={() => window.print()}
+      aria-label="Imprimer ou exporter le CV en PDF"
+      className={`
+        inline-flex items-center gap-2
+        rounded-lg bg-blue-600 px-4 py-2
+        text-sm font-semibold text-white
+        shadow-md hover:bg-blue-700 hover:shadow-lg
+        active:scale-95
+        transition-all duration-150
+        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+        no-print
+        ${className}
+      `}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+        strokeLinejoin="round" aria-hidden="true">
+        <polyline points="6 9 6 2 18 2 18 9" />
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+        <rect x="6" y="14" width="12" height="8" />
+      </svg>
+      Exporter PDF
+    </button>
+  );
+}
