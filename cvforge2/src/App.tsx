@@ -1,12 +1,12 @@
 // src/App.tsx
 
 import { useState } from 'react';
-import { CVForm } from './components/forms/CVForm';
+import { CVForm } from './components/forms/CVForm (1)';
 import { CVPreview } from './components/preview/CVPreview';
 import { useCVStore } from './store/cvStore';
 import type { Template } from './types/cv';
 
-type TabId = 'personal' | 'education' | 'experiences' | 'projects' | 'skills';
+type TabId = 'personal' | 'education' | 'experiences' | 'projects' | 'skills' | 'share';
 
 const TEMPLATES: { id: Template; label: string }[] = [
   { id: 'minimaliste',   label: 'Minimaliste' },

@@ -10,6 +10,7 @@ import { EducationSection } from './EducationSection';
 import { SkillsSection } from './SkillsSection';
 import { ExperiencesSection } from '../../types/ExperiencesSection';
 import { ProjectsSection } from '../../types/ProjectsSection';
+import { ShareableURL } from './../actions/ShareableURL';
 
 const TABS = [
   { id: 'personal',     label: '👤 Infos perso' },
@@ -17,6 +18,7 @@ const TABS = [
   { id: 'experiences',  label: '💼 Expériences' },
   { id: 'projects',     label: '🚀 Projets' },
   { id: 'skills',       label: '⚡ Compétences' },
+  { id: 'share',        label: '🔗 Partage' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
@@ -47,7 +49,7 @@ export function CVForm({ activeTab, onTabChange }: CVFormProps) {
     const subscription = watch((values) => {
       if (values.personal)    updateData({ personal:    values.personal    as CVFormValues['personal'] });
       if (values.education)   updateData({ education:   values.education   as CVFormValues['education'] });
-      if (values.skills)      updateData({ skills:      values.skills as CVFormValues['skills'] });
+      if (values.skills)      updateData({ skills:      values.skills      as CVFormValues['skills'] });
       if (values.experiences) updateData({ experiences: values.experiences as CVFormValues['experiences'] });
       if (values.projects)    updateData({ projects:    values.projects    as CVFormValues['projects'] });
     });
@@ -75,6 +77,7 @@ export function CVForm({ activeTab, onTabChange }: CVFormProps) {
           {activeTab === 'experiences' && <ExperiencesSection />}
           {activeTab === 'projects'    && <ProjectsSection />}
           {activeTab === 'skills'      && <SkillsSection />}
+          {activeTab === 'share'       && <ShareableURL />}
         </form>
       </div>
     </FormProvider>

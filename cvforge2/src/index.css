@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* ── Print styles (Sprint 2 will expand this) ──────────────────────────────── */
 @media print {
   body * {
