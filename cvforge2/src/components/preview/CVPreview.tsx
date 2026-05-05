@@ -1,26 +1,61 @@
-// src/components/preview/CVPreview.tsx (Personne 2 will expand in Sprint 2)
-
 import { useCVStore } from '../../store/cvStore';
-import { ProfessionnelTemplate } from './templates/Professionnel';
-import { MinimalisteTemplate } from './templates/Minimaliste';
-import { TechTemplate } from './templates/Tech';
+import Minimaliste from './templates/Minimaliste';
+import Professionnel from './templates/Professionnel';
+import Tech from './templates/Tech';
 
-export function CVPreview() {
-  const { data, template } = useCVStore();
+import { useState } from 'react';
 
-  return (
-    <div className="h-full overflow-y-auto bg-gray-100 p-4">
-      <div className="text-xs text-center text-slate-400 mb-3 uppercase tracking-widest font-medium">
-        Aperçu — template : {template}
-      </div>
-      <div
-        className="cv-page bg-white shadow-lg mx-auto"
-        style={{ width: '210mm', minHeight: '297mm', padding: '15mm' }}
+export default function CVPreview() {
+  const data = useCVStore((state) => state.data);
+  const template = useCVStore((state) => state.template);
+
+  const [zoom, setZoom] = useState(0.85);
+
+  const renderTemplate = () => {
+    switch (template) {
+      case 'minimaliste':
+        return <Minimaliste data={data} />;
+      case 'professionnel':
+        return <Professionnel data={data} />;
+      case 'tech':
+        return <Tech data={data} />;
+      default:
+        return <Professionnel data={data} />;
+    }
+  };
+
+ return (
+  <section className="h-full overflow-y-auto bg-slate-200 p-6">
+    <div className="mb-4 flex justify-end gap-2">
+      <button
+        type="button"
+        onClick={() => setZoom((z) => Math.max(0.6, z - 0.1))}
+        className="rounded-lg bg-white px-3 py-2 text-sm font-semibold shadow hover:bg-slate-100"
       >
-        {template === 'professionnel' && <ProfessionnelTemplate data={data} />}
-        {template === 'minimaliste'   && <MinimalisteTemplate data={data} />}
-        {template === 'tech'          && <TechTemplate data={data} />}
+        -
+      </button>
+
+      <span className="rounded-lg bg-white px-3 py-2 text-sm shadow">
+        {Math.round(zoom * 100)}%
+      </span>
+
+      <button
+        type="button"
+        onClick={() => setZoom((z) => Math.min(1.2, z + 0.1))}
+        className="rounded-lg bg-white px-3 py-2 text-sm font-semibold shadow hover:bg-slate-100"
+      >
+        +
+      </button>
+    </div>
+
+    <div className="flex justify-center">
+      <div
+        className="w-[794px] min-h-[1123px] bg-white shadow-2xl rounded-sm overflow-hidden origin-top"
+        style={{ transform: `scale(${zoom})` }}
+      >
+        {renderTemplate()}
       </div>
     </div>
-  );
+  </section>
+);
 }
