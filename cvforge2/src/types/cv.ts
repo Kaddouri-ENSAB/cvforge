@@ -122,17 +122,23 @@ export const defaultCVData: CVData = {
   certifications: [],
 };
 
+// ── Auth ──────────────────────────────────────────────────────────────────────
 
-// add this to src/types/cv.ts
+export interface User {
+  email: string;
+  password: string;
+}
+
+export interface AuthState {
+  currentUser: string | null; // stores email
+}
+
+// ── CV Entry (dashboard) ──────────────────────────────────────────────────────
+
 export interface CVEntry {
   id: string;
   title: string;
   createdAt: string;
   updatedAt: string;
   data: CVData;
-}
-
-export interface User {
-  email: string;
-  password: string;
 }
