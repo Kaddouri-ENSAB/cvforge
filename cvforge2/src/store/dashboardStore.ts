@@ -2,8 +2,20 @@
 
 import { create } from 'zustand';
 import { nanoid } from 'nanoid';
-import type { CVEntry, CVData } from '../types/cv';
-import { defaultCVData } from '../types/cv';
+
+interface CVData {
+  [key: string]: any;
+}
+
+interface CVEntry {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  data: CVData;
+}
+
+const defaultCVData: CVData = {};
 
 interface DashboardStore {
   cvList: CVEntry[];

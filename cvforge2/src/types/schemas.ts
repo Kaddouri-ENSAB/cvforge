@@ -27,7 +27,7 @@ export const educationSchema = z.object({
 export const skillSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Nom requis'),
-  level: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]).default(3),
+  level: z.number().min(1).max(5).default(3),
   category: z.enum(['hard', 'soft']).default('hard'),
 });
 
@@ -52,12 +52,28 @@ export const projectSchema = z.object({
   github: z.string().optional().default(''),
 });
 
+export const languageSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Langue requise'),
+  level: z.enum(['Débutant', 'Intermédiaire', 'Avancé', 'Courant', 'Natif']).default('Intermédiaire'),
+});
+
+export const certificationSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Nom requis'),
+  issuer: z.string().optional().default(''),
+  date: z.string().optional().default(''),
+  url: z.string().optional().default(''),
+});
+
 export const cvFormSchema = z.object({
   personal: personalInfoSchema,
   education: z.array(educationSchema).default([]),
   skills: z.array(skillSchema).default([]),
   experiences: z.array(experienceSchema).default([]),
   projects: z.array(projectSchema).default([]),
+  languages: z.array(languageSchema).default([]),
+  certifications: z.array(certificationSchema).default([]),
 });
 
 export type CVFormValues = z.infer<typeof cvFormSchema>;

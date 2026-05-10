@@ -10,7 +10,7 @@ import { useDashboardStore } from './store/dashboardStore';
 import { useAuthStore } from './store/authStore';
 import type { Template } from './types/cv';
 
-type TabId = 'personal' | 'education' | 'experiences' | 'projects' | 'skills' | 'share';
+type TabId = 'personal' | 'education' | 'experiences' | 'projects' | 'skills' | 'languages' | 'certifications' | 'share';
 
 const TEMPLATES: { id: Template; label: string }[] = [
   { id: 'minimaliste',   label: 'Minimaliste' },

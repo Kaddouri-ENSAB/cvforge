@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useCVStore } from '../../store/cvStore';
 import Minimaliste from './templates/Minimaliste';
-import Professionnel from './templates/Professionnel';
+import { ProfessionnelTemplate } from './templates/Professionnel';
 import Tech from './templates/Tech';
 import PrintButton from './PrintButton';
 
@@ -15,9 +15,9 @@ export default function CVPreview() {
   const renderTemplate = () => {
     switch (template) {
       case 'minimaliste':   return <Minimaliste data={data} />;
-      case 'professionnel': return <Professionnel data={data} />;
+      case 'professionnel': return <ProfessionnelTemplate data={data} />;
       case 'tech':          return <Tech data={data} />;
-      default:              return <Professionnel data={data} />;
+      default:              return <ProfessionnelTemplate data={data} />;
     }
   };
 
