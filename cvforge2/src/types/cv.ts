@@ -45,7 +45,7 @@ export interface WorkExperience {
 
 // ── Skills ────────────────────────────────────────────────────────────────────
 
-export type SkillLevel = 1 | 2 | 3 | 4 | 5;
+export type SkillLevel = number;
 
 export interface Skill {
   id: string;

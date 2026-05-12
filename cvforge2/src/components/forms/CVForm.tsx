@@ -35,6 +35,7 @@ interface CVFormProps {
 export function CVForm({ activeTab, onTabChange }: CVFormProps) {
   const { data, updateData } = useCVStore();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const isFirstRender = useRef(true);
 
   const methods = useForm<CVFormValues>({
     resolver: zodResolver(cvFormSchema),
@@ -50,8 +51,28 @@ export function CVForm({ activeTab, onTabChange }: CVFormProps) {
     mode: 'onChange',
   });
 
-  const { watch } = methods;
+  const { watch, reset } = methods;
 
+  // When the store data changes externally (e.g. loading a different CV),
+  // reset the form to show the new data
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    reset({
+      personal:       data.personal,
+      education:      data.education,
+      skills:         data.skills,
+      experiences:    data.experiences,
+      projects:       data.projects,
+      languages:      data.languages,
+      certifications: data.certifications,
+    });
+  }, [data.personal.fullName, data.education.length, data.experiences.length]);
+  // ↑ We watch a few key fields instead of the whole object to avoid infinite loops
+
+  // Sync form changes → store
   useEffect(() => {
     const subscription = watch((values) => {
       if (values.personal)       updateData({ personal:       values.personal       as CVFormValues['personal'] });

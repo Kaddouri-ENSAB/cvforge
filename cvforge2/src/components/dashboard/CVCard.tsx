@@ -49,8 +49,8 @@ export default function CVCard({
   onPreview,
 }: CVCardProps) {
   const accent = getAccent(entry.title);
-  const fullName = entry.data.personal.fullName || 'Sans nom';
-  const email    = entry.data.personal.email    || '';
+ const fullName = entry.data?.personal?.fullName || 'Sans nom';
+const email    = entry.data?.personal?.email    || '';
 
   return (
     <article

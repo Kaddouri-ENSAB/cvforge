@@ -1,5 +1,4 @@
 // src/pages/DashboardPage.tsx (Personne 1 — Sprint B)
-// Connects Dashboard UI (Personne 2) to dashboardStore + routing
 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +11,6 @@ export default function DashboardPage() {
   const { currentUser, logout } = useAuthStore();
   const { cvList, loadForUser, createCV, deleteCV, duplicateCV } = useDashboardStore();
 
-  // Load this user's CVs from localStorage on mount
   useEffect(() => {
     if (currentUser) loadForUser(currentUser);
   }, [currentUser]);
@@ -44,14 +42,10 @@ export default function DashboardPage() {
 
   return (
     <div className="relative">
-      {/* Logout button — top right corner */}
-      <button
-        onClick={handleLogout}
-        className="fixed top-4 right-4 z-50 px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition shadow-sm"
-      >
+      <button onClick={handleLogout}
+        className="fixed top-4 right-4 z-50 px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition shadow-sm">
         Déconnexion
       </button>
-
       <Dashboard
         entries={cvList}
         onCreateCV={handleCreateCV}

@@ -9,22 +9,20 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import './index.css';
 
+// Remove old cvStore localStorage key to avoid conflicts
+localStorage.removeItem('cvforge-storage');
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        {/* Public */}
         <Route path="/login" element={<LoginPage />} />
-
-        {/* Protected */}
         <Route path="/dashboard" element={
           <ProtectedRoute><DashboardPage /></ProtectedRoute>
         } />
         <Route path="/cv/:id" element={
           <ProtectedRoute><App /></ProtectedRoute>
         } />
-
-        {/* Default */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>

@@ -1,4 +1,4 @@
-// src/App.tsx — with editable CV title
+// src/App.tsx
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import CVAnalysisDrawer from './components/analysis/CVAnalysisDrawer';
 import { useCVStore } from './store/cvStore';
 import { useDashboardStore } from './store/dashboardStore';
 import { useAuthStore } from './store/authStore';
+import { defaultCVData } from './types/cv';
 import type { Template } from './types/cv';
 
 type TabId = 'personal' | 'education' | 'experiences' | 'projects' | 'skills' | 'languages' | 'certifications' | 'share';
@@ -23,40 +24,66 @@ export default function App() {
   const [mobileView, setMobileView] = useState<'form' | 'preview'>('form');
   const [editingTitle, setEditingTitle] = useState(false);
   const [title, setTitle] = useState('Mon CV');
+  const [isLoaded, setIsLoaded] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const isLeavingRef = useRef(false); // track if user is navigating away
 
   const { template, setTemplate, setData, data } = useCVStore();
   const { currentUser } = useAuthStore();
-  const { getCVById, updateCV } = useDashboardStore();
+  const { getCVById, updateCV, loadForUser } = useDashboardStore();
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Load CV data and title on mount
-  useEffect(() => {
-    if (!id) return;
-    const cv = getCVById(id);
-    if (cv) {
-      setData(cv.data);
-      setTitle(cv.title);
-    }
-  }, [id]);
-
-  // Auto-save data to dashboard store
   useEffect(() => {
     if (!id || !currentUser) return;
+    setIsLoaded(false);
+    isLeavingRef.current = false;
+
+    loadForUser(currentUser);
+
+    const cv = getCVById(id);
+    if (cv) {
+      const safeData = {
+        ...defaultCVData,
+        ...cv.data,
+        personal:       { ...defaultCVData.personal, ...cv.data.personal },
+        education:      cv.data.education      || [],
+        experiences:    cv.data.experiences    || [],
+        skills:         cv.data.skills         || [],
+        languages:      cv.data.languages      || [],
+        projects:       cv.data.projects       || [],
+        certifications: cv.data.certifications || [],
+      };
+      setData(safeData);
+      setTitle(cv.title);
+    } else {
+      setData(defaultCVData);
+      setTitle('Mon CV');
+    }
+
+    setTimeout(() => setIsLoaded(true), 200);
+  }, [id]);
+
+  // Auto-save — only when loaded and NOT leaving
+  useEffect(() => {
+    if (!isLoaded || !id || !currentUser || isLeavingRef.current) return;
     updateCV(currentUser, id, data);
   }, [data]);
 
-  // Focus input when entering edit mode
   useEffect(() => {
     if (editingTitle) titleInputRef.current?.select();
   }, [editingTitle]);
+
+  const goToDashboard = () => {
+    isLeavingRef.current = true; // stop auto-save before navigating
+    setIsLoaded(false);
+    navigate('/dashboard');
+  };
 
   const saveTitle = () => {
     if (!id || !currentUser) return;
     const trimmed = title.trim() || 'Mon CV';
     setTitle(trimmed);
-    // Update title in store
     const cv = getCVById(id);
     if (cv) updateCV(currentUser, id, cv.data, trimmed);
     setEditingTitle(false);
@@ -69,12 +96,9 @@ export default function App() {
 
   return (
     <div className="h-screen flex flex-col bg-slate-50 overflow-hidden">
-
-      {/* Top bar */}
       <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between flex-shrink-0 shadow-sm no-print">
         <div className="flex items-center gap-3">
-          {/* Back to dashboard */}
-          <button onClick={() => navigate('/dashboard')}
+          <button onClick={goToDashboard}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition"
             title="Retour au dashboard">
             ←
@@ -82,33 +106,21 @@ export default function App() {
           <div className="w-8 h-8 rounded-lg bg-teal-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
             CV
           </div>
-
-          {/* Editable title */}
           {editingTitle ? (
-            <input
-              ref={titleInputRef}
-              value={title}
+            <input ref={titleInputRef} value={title}
               onChange={(e) => setTitle(e.target.value)}
-              onBlur={saveTitle}
-              onKeyDown={handleTitleKeyDown}
-              className="text-sm font-semibold text-slate-800 border-b-2 border-teal-400 outline-none bg-transparent w-40 sm:w-56"
-            />
+              onBlur={saveTitle} onKeyDown={handleTitleKeyDown}
+              className="text-sm font-semibold text-slate-800 border-b-2 border-teal-400 outline-none bg-transparent w-40 sm:w-56" />
           ) : (
-            <button
-              onClick={() => setEditingTitle(true)}
-              className="flex items-center gap-1.5 group"
-              title="Cliquer pour renommer"
-            >
-              <span className="text-sm font-semibold text-slate-800 group-hover:text-teal-600 transition">
-                {title}
-              </span>
+            <button onClick={() => setEditingTitle(true)}
+              className="flex items-center gap-1.5 group" title="Cliquer pour renommer">
+              <span className="text-sm font-semibold text-slate-800 group-hover:text-teal-600 transition">{title}</span>
               <span className="text-slate-300 group-hover:text-teal-400 transition text-xs">✏️</span>
             </button>
           )}
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Template selector */}
           <div className="hidden sm:flex items-center gap-2">
             <span className="text-xs text-slate-500 hidden md:block">Template :</span>
             <div className="flex gap-1">
@@ -122,8 +134,6 @@ export default function App() {
               ))}
             </div>
           </div>
-
-          {/* Mobile toggle */}
           <div className="flex md:hidden border border-slate-200 rounded-lg overflow-hidden">
             <button onClick={() => setMobileView('form')}
               className={`px-3 py-1.5 text-xs font-medium transition-all ${mobileView === 'form' ? 'bg-teal-500 text-white' : 'bg-white text-slate-600'}`}>
@@ -134,13 +144,11 @@ export default function App() {
               👁️ Aperçu
             </button>
           </div>
-
           <div className="h-5 w-px bg-slate-200 hidden sm:block" />
           <CVAnalysisDrawer />
         </div>
       </header>
 
-      {/* Split screen */}
       <main className="flex flex-1 overflow-hidden">
         <div className={`w-full md:w-1/2 border-r border-slate-200 flex flex-col overflow-hidden bg-white
           ${mobileView === 'preview' ? 'hidden md:flex' : 'flex'}`}>
