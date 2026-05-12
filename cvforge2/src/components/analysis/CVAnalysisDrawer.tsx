@@ -9,7 +9,7 @@ export default function CVAnalysisDrawer() {
   const [open, setOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Fermer avec Escape
+  // Fermer avec Escape(usestate)
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) setOpen(false);

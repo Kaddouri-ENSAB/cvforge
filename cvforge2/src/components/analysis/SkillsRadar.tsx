@@ -1,4 +1,4 @@
-// src/components/analysis/SkillsRadar.tsx (Personne 2 — UI Polish)
+// src/components/analysis/SkillsRadar.tsx (Personne 2 — fix langues + certifs)
 
 import { useCVStore } from '../../store/cvStore';
 
@@ -10,18 +10,23 @@ interface RadarCategory {
 
 function useRadarData(): RadarCategory[] {
   const data = useCVStore((state) => state.data);
-  const { personal, education, experiences, projects, skills } = data;
+  const { personal, education, experiences, projects, skills, languages, certifications } = data;
 
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
 
-  const profileFields = [personal.fullName, personal.email, personal.phone, personal.summary, personal.address];
+  const profileFields = [
+    personal.fullName, personal.email,
+    personal.phone, personal.summary, personal.address,
+  ];
 
   return [
-    { label: 'Profil',      value: clamp(profileFields.filter(Boolean).length / profileFields.length), color: '#6366f1' },
-    { label: 'Formation',   value: clamp(education.length / 2),                                        color: '#06b6d4' },
-    { label: 'Expériences', value: clamp(experiences.length / 3),                                      color: '#f59e0b' },
-    { label: 'Projets',     value: clamp(projects.length / 2),                                         color: '#22c55e' },
-    { label: 'Compétences', value: clamp(skills.length / 5),                                           color: '#ef4444' },
+    { label: 'Profil',         value: clamp(profileFields.filter(Boolean).length / profileFields.length), color: '#6366f1' },
+    { label: 'Formation',      value: clamp(education.length / 2),                                        color: '#06b6d4' },
+    { label: 'Expériences',    value: clamp(experiences.length / 3),                                      color: '#f59e0b' },
+    { label: 'Projets',        value: clamp(projects.length / 2),                                         color: '#22c55e' },
+    { label: 'Compétences',    value: clamp(skills.length / 5),                                           color: '#ef4444' },
+    { label: 'Langues',        value: clamp(languages.length / 2),                                        color: '#ec4899' },
+    { label: 'Certifications', value: clamp(certifications.length / 2),                                   color: '#8b5cf6' },
   ];
 }
 
@@ -34,36 +39,35 @@ function polarToCartesian(cx: number, cy: number, r: number, angleRad: number) {
 
 export default function SkillsRadar() {
   const categories = useRadarData();
-  const cx = 130;
-  const cy = 130;
-  const maxR = 95;
+  const cx = 140;
+  const cy = 140;
+  const maxR = 100;
   const n = categories.length;
 
-  const axes = categories.map((_, i) => {
-    const angle = (2 * Math.PI * i) / n;
-    return polarToCartesian(cx, cy, maxR, angle);
-  });
-
-  const rings = [0.25, 0.5, 0.75, 1].map((factor) =>
-    categories.map((_, i) => {
-      const angle = (2 * Math.PI * i) / n;
-      return polarToCartesian(cx, cy, factor * maxR, angle);
-    })
+  const axes = categories.map((_, i) =>
+    polarToCartesian(cx, cy, maxR, (2 * Math.PI * i) / n)
   );
 
-  const userPoints = categories.map((cat, i) => {
-    const angle = (2 * Math.PI * i) / n;
-    return polarToCartesian(cx, cy, cat.value * maxR, angle);
-  });
+  const rings = [0.25, 0.5, 0.75, 1].map((factor) =>
+    categories.map((_, i) =>
+      polarToCartesian(cx, cy, factor * maxR, (2 * Math.PI * i) / n)
+    )
+  );
+
+  const userPoints = categories.map((cat, i) =>
+    polarToCartesian(cx, cy, cat.value * maxR, (2 * Math.PI * i) / n)
+  );
 
   const toPath = (pts: { x: number; y: number }[]) =>
     pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ') + ' Z';
 
-  const labelR = maxR + 22;
-  const labels = categories.map((cat, i) => {
-    const angle = (2 * Math.PI * i) / n;
-    return { ...polarToCartesian(cx, cy, labelR, angle), label: cat.label, value: cat.value, color: cat.color };
-  });
+  const labelR = maxR + 24;
+  const labels = categories.map((cat, i) => ({
+    ...polarToCartesian(cx, cy, labelR, (2 * Math.PI * i) / n),
+    label: cat.label,
+    value: cat.value,
+    color: cat.color,
+  }));
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -72,18 +76,16 @@ export default function SkillsRadar() {
         <p className="text-xs text-slate-400 mt-0.5">Complétude par catégorie</p>
       </div>
 
-      <div className="flex flex-col items-center px-5 py-5">
+      <div className="flex flex-col items-center px-4 py-5">
         <svg
-          viewBox="0 0 260 260"
-          width="260"
-          height="260"
+          viewBox="0 0 280 280"
+          width="280" height="280"
           aria-label="Radar de complétude du CV"
           role="img"
         >
           {/* Grille */}
           {rings.map((ring, ri) => (
-            <polygon
-              key={ri}
+            <polygon key={ri}
               points={ring.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}
               fill={ri === 3 ? '#f8fafc' : 'none'}
               stroke="#e2e8f0"
@@ -93,10 +95,10 @@ export default function SkillsRadar() {
 
           {/* Axes */}
           {axes.map((end, i) => (
-            <line key={i} x1={cx} y1={cy}
+            <line key={i}
+              x1={cx} y1={cy}
               x2={end.x.toFixed(1)} y2={end.y.toFixed(1)}
-              stroke="#e2e8f0" strokeWidth="1"
-              strokeDasharray="3 3"
+              stroke="#e2e8f0" strokeWidth="1" strokeDasharray="3 3"
             />
           ))}
 
@@ -109,29 +111,22 @@ export default function SkillsRadar() {
             strokeLinejoin="round"
           />
 
-          {/* Points colorés par catégorie */}
+          {/* Points colorés */}
           {userPoints.map((p, i) => (
-            <circle
-              key={i}
+            <circle key={i}
               cx={p.x} cy={p.y} r="5"
               fill={categories[i].color}
-              stroke="white"
-              strokeWidth="2"
+              stroke="white" strokeWidth="2"
             />
           ))}
 
           {/* Labels */}
           {labels.map((l, i) => (
-            <text
-              key={i}
-              x={l.x.toFixed(1)}
-              y={l.y.toFixed(1)}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontSize="10"
-              fontWeight="600"
-              fill="#475569"
-              fontFamily="sans-serif"
+            <text key={i}
+              x={l.x.toFixed(1)} y={l.y.toFixed(1)}
+              textAnchor="middle" dominantBaseline="middle"
+              fontSize="9" fontWeight="600"
+              fill="#475569" fontFamily="sans-serif"
             >
               {l.label}
             </text>
@@ -139,13 +134,11 @@ export default function SkillsRadar() {
         </svg>
 
         {/* Légende */}
-        <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full mt-1">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full mt-1 px-2">
           {categories.map((cat) => (
             <div key={cat.label} className="flex items-center gap-2">
-              <span
-                className="flex-shrink-0 w-2.5 h-2.5 rounded-full"
-                style={{ backgroundColor: cat.color }}
-              />
+              <span className="flex-shrink-0 w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: cat.color }} />
               <span className="text-xs text-slate-600 flex-1">{cat.label}</span>
               <span className="text-xs font-mono font-semibold" style={{ color: cat.color }}>
                 {Math.round(cat.value * 100)}%
