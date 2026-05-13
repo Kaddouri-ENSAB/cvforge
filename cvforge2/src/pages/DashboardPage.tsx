@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { useDashboardStore } from '../store/dashboardStore';
 import Dashboard from '../components/dashboard/Dashboard';
+import type { CVEntry } from '../types/cv';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -40,6 +41,9 @@ export default function DashboardPage() {
     navigate('/login');
   };
 
+  // Cast to any to avoid type conflict between our CVEntry and Dashboard's CVEntry
+  const entries = cvList as unknown as CVEntry[];
+
   return (
     <div className="relative">
       <button onClick={handleLogout}
@@ -47,7 +51,7 @@ export default function DashboardPage() {
         Déconnexion
       </button>
       <Dashboard
-        entries={cvList}
+        entries={entries}
         onCreateCV={handleCreateCV}
         onEditCV={handleEditCV}
         onDuplicateCV={handleDuplicateCV}
